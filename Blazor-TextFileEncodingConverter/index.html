@@ -1,0 +1,88 @@
+<!DOCTYPE html><html lang="en"><head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Text File Encoding Converter</title>
+    <base href="/Blazor-TextFileEncodingConverter/"/>
+
+    <meta property="og:url" content="https://sample-by-jsakamoto.github.io/Blazor-TextFileEncodingConverter/"/>
+    <meta property="og:title" content="Text File Encoding Converter"/>
+    <meta property="og:image" content="https://sample-by-jsakamoto.github.io/Blazor-TextFileEncodingConverter/images/social-preview.png"/>
+    <meta property="og:description" content="This sample program shows how Blazor WebAssembly apps can handle File System Access API well."/>
+    <meta name="twitter:card" content="summary_large_image"/>
+
+    <link rel="stylesheet" href="css/blazor-ui.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/water.css"/>
+    <link rel="stylesheet" href="TextFileEncodingConverter.styles.css"/>
+
+<!-- %%-PRERENDERING-HEADOUTLET-BEGIN-%% -->
+
+<!-- %%-PRERENDERING-HEADOUTLET-END-%% -->
+</head>
+
+  <body>
+    <div id="app">
+      <svg class="loading-progress">
+        <circle r="40%" cx="50%" cy="50%"></circle>
+        <circle r="40%" cx="50%" cy="50%"></circle>
+      </svg>
+      <div class="loading-progress-text"></div>
+    
+<!-- %%-PRERENDERING-BEGIN-%% -->
+<div style="opacity: 0; position: fixed; z-index: -1; top: 0; left: 0; bottom: 0; right: 0;">
+    <main b-l53lo5j4pe><div b-l53lo5j4pe><h1 b-l53lo5j4pe>
+            Text file encoding converter
+        </h1></div>
+
+    <div b-l53lo5j4pe><span class="caption" b-l53lo5j4pe>
+            Source folder
+        </span>
+        <button b-l53lo5j4pe>(Chose the source folder)</button></div>
+
+    <div b-l53lo5j4pe><span class="caption" b-l53lo5j4pe>
+            Source encoding
+        </span>
+
+        <select name="_sourceEncodingName" value="utf-16"><option value="utf-16" b-l53lo5j4pe selected>Unicode</option><option value="utf-16BE" b-l53lo5j4pe>Unicode (Big-Endian)</option><option value="utf-32" b-l53lo5j4pe>Unicode (UTF-32)</option><option value="utf-32BE" b-l53lo5j4pe>Unicode (UTF-32 Big-Endian)</option><option value="us-ascii" b-l53lo5j4pe>US-ASCII</option><option value="iso-8859-1" b-l53lo5j4pe>Western European (ISO)</option><option value="utf-8" b-l53lo5j4pe>Unicode (UTF-8)</option></select></div>
+
+    <div class="source-files" b-l53lo5j4pe><span class="caption" b-l53lo5j4pe>
+            Source files
+        </span>
+
+        <ul b-l53lo5j4pe></ul></div>
+
+    <div b-l53lo5j4pe><span class="caption" b-l53lo5j4pe>
+            Output folder
+        </span>
+
+        <button b-l53lo5j4pe>(Chose the output folder)</button></div>
+
+    <div b-l53lo5j4pe><span class="caption" b-l53lo5j4pe>
+            Output encoding
+        </span>
+
+        <select name="_outputEncodingName" value="utf-8"><option value="utf-16" b-l53lo5j4pe>Unicode</option><option value="utf-16BE" b-l53lo5j4pe>Unicode (Big-Endian)</option><option value="utf-32" b-l53lo5j4pe>Unicode (UTF-32)</option><option value="utf-32BE" b-l53lo5j4pe>Unicode (UTF-32 Big-Endian)</option><option value="us-ascii" b-l53lo5j4pe>US-ASCII</option><option value="iso-8859-1" b-l53lo5j4pe>Western European (ISO)</option><option value="utf-8" b-l53lo5j4pe selected>Unicode (UTF-8)</option></select></div>
+
+    <div b-l53lo5j4pe><button disabled b-l53lo5j4pe>
+            🚀 Convert
+        </button></div></main>
+
+<footer b-l53lo5j4pe><a href="https://github.com/sample-by-jsakamoto/Blazor-TextFileEncodingConverter/blob/master/LICENSE" target="_blank" b-l53lo5j4pe>GNU General Public License v3.0</a>
+    <span b-l53lo5j4pe>|</span>
+    <a href="https://github.com/sample-by-jsakamoto/Blazor-TextFileEncodingConverter" target="_blank" b-l53lo5j4pe>Source Code</a>
+    <span b-l53lo5j4pe>|</span>
+    <span b-l53lo5j4pe>Powered by <a href="https://github.com/KristofferStrube/Blazor.FileSystemAccess" target="_blank" b-l53lo5j4pe>KristofferStrube.Blazor.FileSystemAccess</a></span></footer>
+
+</div>
+<!-- %%-PRERENDERING-END-%% -->
+</div>
+
+    <div id="blazor-error-ui">
+      An unhandled error has occurred.
+      <a href="" class="reload">Reload</a>
+      <a class="dismiss">🗙</a>
+    </div>
+    <script src="_framework/blazor.webassembly.js" autostart="false"></script>
+    <script src="brotliloader.min.js" type="module"></script>
+  
+
+</body></html>
