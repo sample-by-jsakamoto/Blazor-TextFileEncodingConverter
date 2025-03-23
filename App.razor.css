@@ -1,0 +1,37 @@
+﻿main {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin: auto;
+    max-width: 600px;
+}
+
+    main > div {
+        display: flex;
+        flex-direction: row;
+        gap: 12px;
+        align-items: center;
+    }
+
+.caption {
+    display: inline-block;
+    width: 8em;
+}
+
+main > div.source-files {
+    align-items: start;
+    margin-bottom: 24px;
+}
+
+    main > div.source-files ul {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+    }
+
+footer {
+    margin-top: 48px;
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+}

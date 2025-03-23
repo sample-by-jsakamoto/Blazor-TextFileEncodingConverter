@@ -1,0 +1,206 @@
+﻿@using System.Text
+@using KristofferStrube.Blazor.FileSystem
+@inject IFileSystemAccessService FileSystemAccessService;
+@inject IJSRuntime JSRuntime
+@inject ILogger<App> Logger
+
+<main>
+
+    <div>
+        <h1>
+            Text file encoding converter
+        </h1>
+    </div>
+
+    <div>
+        <span class="caption">
+            Source folder
+        </span>
+        <button @onclick="OpenFolderToRead">
+            @if (_sourceFolderName is null)
+            {
+                <text>(Chose the source folder)</text>
+            }
+            else
+            {
+                <text>📂 @_sourceFolderName (Click here to chose another folder)</text>
+            }
+        </button>
+    </div>
+
+    <div>
+        <span class="caption">
+            Source encoding
+        </span>
+
+        <InputSelect @bind-Value="_sourceEncodingName">
+            @foreach (var encoding in _encodings)
+            {
+                <option value="@encoding.Name">@encoding.DisplayName</option>
+            }
+        </InputSelect>
+    </div>
+
+    <div class="source-files">
+        <span class="caption">
+            Source files
+        </span>
+
+        <ul>
+            @foreach (var file in _sourceFiles)
+            {
+                <li>🗒️@file.Name</li>
+            }
+        </ul>
+    </div>
+
+    <div>
+        <span class="caption">
+            Output folder
+        </span>
+
+        <button @onclick="OpenFolderToWrite">
+            @if (_outputFolderName is null)
+            {
+                <text>(Chose the output folder)</text>
+            }
+            else
+            {
+                <text>📂 @_outputFolderName (Click here to chose another folder)</text>
+            }
+        </button>
+    </div>
+
+    <div>
+        <span class="caption">
+            Output encoding
+        </span>
+
+        <InputSelect @bind-Value="_outputEncodingName">
+            @foreach (var encoding in _encodings)
+            {
+                <option value="@encoding.Name">@encoding.DisplayName</option>
+            }
+        </InputSelect>
+    </div>
+
+    <div>
+        <button @onclick="ConvertIt" disabled="@(!IsReadyToConvert())">
+            🚀 Convert
+        </button>
+    </div>
+
+</main>
+
+<footer>
+    <a href="https://github.com/sample-by-jsakamoto/Blazor-TextFileEncodingConverter/blob/master/LICENSE" target="_blank">GNU General Public License v3.0</a>
+    <span>|</span>
+    <a href="https://github.com/sample-by-jsakamoto/Blazor-TextFileEncodingConverter" target="_blank">Source Code</a>
+    <span>|</span>
+    <span>Powered by <a href="https://github.com/KristofferStrube/Blazor.FileSystemAccess" target="_blank">KristofferStrube.Blazor.FileSystemAccess</a></span>
+</footer>
+
+@code
+{
+    private IEnumerable<EncodingInfo> _encodings = [];
+
+    private string? _sourceEncodingName;
+
+    private string? _sourceFolderName;
+
+    private string? _outputEncodingName;
+
+    private string? _outputFolderName;
+
+    private FileSystemDirectoryHandle? _outputFolderHandle;
+
+    private IEnumerable<File> _sourceFiles = [];
+
+    public class File
+    {
+        public required string Name;
+        public required FileSystemFileHandle Handle;
+    }
+
+    protected override void OnInitialized()
+    {
+        _encodings = Encoding.GetEncodings();
+        _sourceEncodingName = _encodings.First().Name;
+        _outputEncodingName = "utf-8";
+    }
+
+    private async Task OpenFolderToRead()
+    {
+        if (_sourceEncodingName is null) return;
+
+        try
+        {
+            var directoryHandle = await this.FileSystemAccessService.ShowDirectoryPickerAsync();
+
+            _sourceFolderName = await directoryHandle.GetNameAsync();
+            var fileHandles = await directoryHandle.ValuesAsync();
+            var fileNameGetterTasks = fileHandles.OfType<FileSystemFileHandle>().Select(async h =>
+            {
+                var name = await h.GetNameAsync();
+                return new File { Name = name, Handle = h };
+            }).ToArray();
+            await Task.WhenAll(fileNameGetterTasks);
+            _sourceFiles = fileNameGetterTasks.Select(t => t.Result);
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, ex.Message);
+            _sourceFolderName = null;
+            _sourceFiles = [];
+        }
+    }
+
+    private async Task OpenFolderToWrite()
+    {
+        try
+        {
+            _outputFolderHandle = await this.FileSystemAccessService.ShowDirectoryPickerAsync();
+            await _outputFolderHandle.RequestPermissionAsync(new() { Mode = FileSystemPermissionMode.ReadWrite });
+            _outputFolderName = await _outputFolderHandle.GetNameAsync();
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, ex.Message);
+            _outputFolderHandle = null;
+            _outputFolderName = null;
+        }
+    }
+
+    private bool IsReadyToConvert()
+    {
+        return
+            _sourceFolderName is not null &&
+            _sourceEncodingName is not null &&
+            _outputFolderName is not null &&
+            _outputEncodingName is not null;
+    }
+
+    private async Task ConvertIt(MouseEventArgs args)
+    {
+        if (_outputFolderHandle is null) return;
+        var sourceEncoding = Encoding.GetEncoding(_sourceEncodingName ?? "utf-8");
+        var outputEncoding = Encoding.GetEncoding(_outputEncodingName ?? "utf-8");
+
+        var convertingTasks = _sourceFiles.Select(async sourceFile =>
+        {
+            await using var file = await sourceFile.Handle.GetFileAsync();
+            var sourceBytes = await file.ArrayBufferAsync();
+            var sourceText = sourceEncoding.GetString(sourceBytes);
+
+            var outputFileName = sourceFile.Name;
+            await using var outputFileHandle = await _outputFolderHandle.GetFileHandleAsync(outputFileName, new FileSystemGetFileOptions { Create = true });
+            await using var outputFileStream = await outputFileHandle.CreateWritableAsync();
+            var outputBytes = outputEncoding.GetBytes(sourceText);
+            await outputFileStream.WriteAsync(outputBytes);
+        }).ToArray();
+
+        await Task.WhenAll(convertingTasks);
+
+        await JSRuntime.InvokeVoidAsync("alert", "Conversion done.");
+    }
+}
